@@ -36,9 +36,9 @@ Add this to your ESPHome YAML configuration:
         distance:
           name: "Distance"
           update_interval: 100ms
+          # If using a generic clone, you might need an offset:
+          # offset: 50.0 # optional, defaults to 0
           filters:
-            # If using a generic clone, you might need an offset:
-            # - offset: 50.0
             - median:
                 window_size: 5
                 send_every: 1
