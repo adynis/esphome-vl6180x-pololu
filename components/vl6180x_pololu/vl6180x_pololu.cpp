@@ -47,11 +47,28 @@ void VL6180XPololuHub::dump_config() {
 
 void VL6180XDistanceSensor::setup() {
   if (hub_->initialized_) {
-    // SYSRANGE__PART_TO_PART_RANGE_OFFSET (Register 0x024)
-    // This shifts the "zero" point of the sensor hardware. 
-    // It's essential for clones that report 0mm when an object is still 50mm away.
-    hub_->sensor.writeReg(0x024, (uint8_t)offset_);
-    ESP_LOGI(TAG, "Hardware Range Offset applied: %d mm", offset_);
+    /** * SYSRANGE__PART_TO_PART_RANGE_OFFSET (Register 0x024)
+     * This register handles the zero-distance calibration. 
+     * STMicroelectronics typically stores a unique factory calibration value here 
+     * in the sensor's Non-Volatile Memory (NVM) during production.
+     * * Instead of overwriting this factory data, we use an ADDITIVE approach:
+     * 1. Read the existing factory offset.
+     * 2. Add the user-defined offset from YAML.
+     * 3. Write the combined result back to the hardware.
+     * This preserves factory precision while compensating for clones or housing gaps.
+     */
+
+    // Read the factory-set offset (8-bit, 2's complement integer)
+    int8_t factory_offset = (int8_t)hub_->sensor.readReg(0x024);
+
+    // Add the user offset to the factory value
+    int8_t total_offset = factory_offset + (int8_t)offset_;
+
+    // Write the combined total back to the sensor hardware register
+    hub_->sensor.writeReg(0x024, (uint8_t)total_offset);
+
+    ESP_LOGI(TAG, "Distance Offset applied: Factory=%d, User=%d, Total Applied=%d", 
+             factory_offset, offset_, total_offset);
   }
 }
 
