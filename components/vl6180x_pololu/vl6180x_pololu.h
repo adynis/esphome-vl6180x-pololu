@@ -13,7 +13,6 @@ class VL6180XPololuHub : public Component {
  public:
   VL6180X sensor;
   bool initialized_{false};  // True if the sensor is found and correctly identified
-  bool is_fresh_out_of_reset_{false};
   int sda_pin_, scl_pin_;
   uint8_t address_{0x29};
   int als_gain_{20};
