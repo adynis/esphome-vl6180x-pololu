@@ -13,7 +13,7 @@ This is a custom ESPHome component for the **VL6180X** Time-of-Flight (ToF) dist
 ## Hardware Compatibility
 
 - **Official Pololu VL6180X Carrier:** Fully compatible. Usually comes with a factory NVM offset (e.g., ~21mm). 
-- **Generic / AliExpress Modules:** These clones vary in quality. During testing, we found some clones have a very high internal factory offset (e.g., ~52mm), making them report NaN or Errors at close range unless corrected with the offset parameter.
+- **Generic / AliExpress Modules: These clones vary in quality and often lack proper factory calibration. During testing, we found that some clones report 0mm even when an object is still ~50mm away. This leads to Range Underflow errors (NaN) when objects move closer. Using the offset parameter (e.g., 50) corrects the hardware zero-point and restores functionality at close ranges.
 
 ## Installation
 
@@ -62,7 +62,7 @@ For a full working example, see examples/vl6180x-basic-test.yaml.
 ### Distance Sensor (distance:)
 - **name** (Required, string): The name of the distance sensor.
 - **update_interval** (Optional, Time): Defaults to 100ms.
-- **offset** (Optional, int): Hardware offset in mm to adjust the 0mm point. Defaults to 0. 
+- **offset** (Optional, int): Hardware offset in mm to adjust the 0mm point. Defaults to 0. Note: you need a hardware restart to consider this.
   - Note: This uses additive hardware logic. It reads the factory calibration from the sensor and adds your value to it.
 
 ### Ambient Light Sensor (ambient_light:)
