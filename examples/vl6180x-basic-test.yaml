@@ -7,9 +7,7 @@ esphome:
 
 # Link to your custom component on GitHub
 external_components:
-  - source:
-      type: git
-      url: https://github.com/adynis/esphome-vl6180x-pololu
+  - source: github://adynis/esphome-vl6180x-pololu@v1.0.0
     components: [ vl6180x_pololu ]
 
 esp32:
@@ -17,9 +15,9 @@ esp32:
   framework:
     type: arduino
 
-# # Enable logging - use DEBUG level to see detailed hardware diagnostics
-# logger:
-#   level: DEBUG
+# Enable logging - use DEBUG level to see detailed hardware diagnostics
+logger:
+  level: DEBUG
 
 # Enable Home Assistant API
 api:
@@ -73,5 +71,6 @@ sensor:
       
     # ambient_light_error_code:
     #   name: "ALS Error Code"
+
 
 
