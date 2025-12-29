@@ -20,9 +20,7 @@ This is a custom ESPHome component for the **VL6180X** Time-of-Flight (ToF) dist
 Add this to your ESPHome YAML configuration:
 ```yaml
     external_components:
-      - source:
-          type: git
-          url: [https://github.com/adynis/esphome-vl6180x-pololu](https://github.com/adynis/esphome-vl6180x-pololu)
+      - source: github://adynis/esphome-vl6180x-pololu@v1.0.0
         components: [ vl6180x_pololu ]
 
     sensor:
