@@ -1,9 +1,9 @@
-# Example configuration for the VL6180X custom component
-# This file can be used as a starting point for testing your sensor.
+# Basic test configuration for the VL6180X custom component
+# Use this to verify your hardware connection and basic distance readings.
 
 esphome:
-  name: temp-test-vl6180x
-  friendly_name: Temp Test VL6180X
+  name: vl6180x-basic-test
+  friendly_name: VL6180X Basic Test
 
 # Link to your custom component on GitHub
 external_components:
@@ -17,7 +17,7 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging - use DEBUG level to see the custom error codes (like 199)
+# Enable logging - use DEBUG level to see detailed hardware diagnostics
 logger:
   level: DEBUG
 
@@ -34,9 +34,9 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   
-  # Fallback AP
+  # Fallback AP for initial configuration
   ap:
-    ssid: "Temp-Test-Vl6180X"
+    ssid: "VL6180X-Basic-Test"
     password: "DLgJlZAOCUGI"
 
 captive_portal:
@@ -47,13 +47,14 @@ sensor:
     scl_pin: 22 # Connect to SCL pin of your VL6180X
     # address: 0x29 # Optional, defaults to 0x29
     
+    # DISTANCE SENSOR SECTION
     distance:
       name: "Distance"
       update_interval: 100ms
       filters:
-        # Generic clones often require an offset (e.g., +50mm)
+        # NOTE: Generic clones often require an offset (e.g., +50mm)
         - offset: 50.0
-        # Median filter helps stabilizing the readings
+        # Median filter stabilizes readings by removing outliers
         - median:
             window_size: 5
             send_every: 1
@@ -61,14 +62,14 @@ sensor:
     distance_error_code:
       name: "Distance Error Code"
 
-    # NOTE: ALS (Light Sensing) is commented out because some generic 
-    # VL6180X modules have hardware defects preventing it from working.
-    # Uncomment the section below if your sensor supports ALS.
+    # AMBIENT LIGHT SENSOR (ALS) SECTION
+    # NOTE: Commented out because some generic VL6180X modules have faulty light sensors.
+    # Uncomment below if your hardware supports ALS.
     
     # ambient_light:
     #   name: "Illuminance"
     #   update_interval: 5s
-    #   gain: 20 # Available gains: 1, 10, 20, 40
+    #   gain: 20 # Available gains: 1, 10, 20, 40 (20 is standard)
       
     # ambient_light_error_code:
     #   name: "ALS Error Code"
