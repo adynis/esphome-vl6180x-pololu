@@ -17,9 +17,9 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging - use DEBUG level to see detailed hardware diagnostics
-logger:
-  level: DEBUG
+# # Enable logging - use DEBUG level to see detailed hardware diagnostics
+# logger:
+#   level: DEBUG
 
 # Enable Home Assistant API
 api:
@@ -73,3 +73,4 @@ sensor:
       
     # ambient_light_error_code:
     #   name: "ALS Error Code"
+
