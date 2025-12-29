@@ -70,8 +70,8 @@ For a complete, ready-to-flash configuration, check out the [Basic Test Example]
 - **199:** **Hardware not found** (Check I2C wiring, pins, or power)
 
 ### ALS Errors (Register 0x04E)
-- **0:** Success
-- **3:** Measurement completed (Value should be valid)
+- **0:** **Success** (The component automatically filters status bits, so `0` means valid data)
+- **1-7:** Various ALS specific errors (e.g., overflow or signal saturation)
 - **199:** **Hardware not found**
 
 ## Credits
