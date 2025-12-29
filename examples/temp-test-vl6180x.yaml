@@ -1,0 +1,74 @@
+# Example configuration for the VL6180X custom component
+# This file can be used as a starting point for testing your sensor.
+
+esphome:
+  name: temp-test-vl6180x
+  friendly_name: Temp Test VL6180X
+
+# Link to your custom component on GitHub
+external_components:
+  - source:
+      type: git
+      url: https://github.com/adynis/esphome-vl6180x-pololu
+    components: [ vl6180x_pololu ]
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging - use DEBUG level to see the custom error codes (like 199)
+logger:
+  level: DEBUG
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "w2lj73t5aWlyVrROEXiH7eXynJliitveO0Bet0SH910="
+
+ota:
+  - platform: esphome
+    password: "8e6c1cf89046a1566a53e3d280c4e2b2"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  
+  # Fallback AP
+  ap:
+    ssid: "Temp-Test-Vl6180X"
+    password: "DLgJlZAOCUGI"
+
+captive_portal:
+
+sensor:
+  - platform: vl6180x_pololu
+    sda_pin: 23 # Connect to SDA pin of your VL6180X
+    scl_pin: 22 # Connect to SCL pin of your VL6180X
+    # address: 0x29 # Optional, defaults to 0x29
+    
+    distance:
+      name: "Distance"
+      update_interval: 100ms
+      filters:
+        # Generic clones often require an offset (e.g., +50mm)
+        - offset: 50.0
+        # Median filter helps stabilizing the readings
+        - median:
+            window_size: 5
+            send_every: 1
+            
+    distance_error_code:
+      name: "Distance Error Code"
+
+    # NOTE: ALS (Light Sensing) is commented out because some generic 
+    # VL6180X modules have hardware defects preventing it from working.
+    # Uncomment the section below if your sensor supports ALS.
+    
+    # ambient_light:
+    #   name: "Illuminance"
+    #   update_interval: 5s
+    #   gain: 20 # Available gains: 1, 10, 20, 40
+      
+    # ambient_light_error_code:
+    #   name: "ALS Error Code"
