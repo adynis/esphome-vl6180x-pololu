@@ -54,6 +54,13 @@ Add this to your ESPHome YAML configuration:
         ambient_light_error_code:
           name: "ALS Error Code"
 ```
+
+## Quick Start Example
+For a complete, ready-to-flash configuration, check out the [Basic Test Example](examples/vl6180x-basic-test.yaml). This example includes:
+- Default I2C pin configuration.
+- Distance sensor with stabilizing filters.
+- Pre-configured diagnostic sensors for error codes.
+ 
 ## Error Codes Reference
 
 ### Distance Errors (Register 0x04D)
