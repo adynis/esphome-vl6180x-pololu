@@ -12,13 +12,6 @@ void VL6180XPololuHub::setup() {
   Wire.begin(sda_pin_, scl_pin_);
   sensor.setBus(&Wire);
   sensor.setAddress(address_);
-
-  // Before init, check if we jsut started (cold boot)
-  if (sensor.readReg(0x010) == 0x01) {
-    this->is_fresh_out_of_reset_ = true;
-    // reset the flag
-    sensor.writeReg(0x010, 0x00);
-  }
   
   // Library initialization (resets sensor internal state)
   sensor.init();
@@ -54,41 +47,38 @@ void VL6180XPololuHub::dump_config() {
 
 void VL6180XDistanceSensor::setup() {
   if (hub_->initialized_) {
-    /** * ANTI-ACCUMULATION LOGIC (Soft Reset Handling):
-     * The VL6180X is an independent I2C peripheral that may remain powered 
-     * even if the ESP32 performs a software reset. If we simply added the 
-     * offset every time 'setup()' ran, the value in Register 0x024 would 
-     * keep growing (e.g., 52 + 50 = 102, then 102 + 50 = 152...) leading to 
-     * an 8-bit integer overflow.
-     * * To prevent this, we check the 'is_fresh_out_of_reset_' flag, which 
-     * was captured from Register 0x010 (SYSTEM__FRESH_OUT_OF_RESET) 
-     * during the Hub's initialization.
+    /** * MAGIC MARKER LOGIC (Hardware State Detection):
+     * We use Register 0x011 (SYSTEM__HISTORY_CTRL) as a scratchpad marker.
+     * This register defaults to 0x00 on power-up. We set it to 0x12 after our 
+     * first calibration to signal that the additive offset has been applied.
+     * This prevents the offset from being added multiple times if the ESP32 
+     * restarts while the sensor remains powered (Soft Reset).
      */
-    
-    if (hub_->is_fresh_out_of_reset_) {
-      // --- COLD BOOT DETECTED ---
-      // The sensor has just been powered on. Register 0x024 currently 
-      // holds the original factory calibration from NVM.
+    uint8_t marker = hub_->sensor.readReg(0x011);
 
-      // Read factory calibration (stored as an 8-bit signed integer)
+    if (marker != 0x12) {
+      // --- COLD BOOT / POWER-ON DETECTED ---
+      // The sensor has just been powered on. Register 0x024 contains 
+      // the original factory calibration from NVM.
+
       int8_t factory_offset = (int8_t)hub_->sensor.readReg(0x024);
-
-      // Perform additive calibration: Factory NVM + User YAML offset
       int8_t total_offset = factory_offset + (int8_t)offset_;
-
-      // Write the combined offset back to the hardware register
+      
+      // Apply the combined additive offset to the hardware register
       hub_->sensor.writeReg(0x024, (uint8_t)total_offset);
+      
+      // Set the Magic Marker to prevent double-calibration on soft resets
+      hub_->sensor.writeReg(0x011, 0x12);
 
-      ESP_LOGI(TAG, "Cold Boot: Hardware Offset Applied (Factory=%d, User=%d, Total=%d)", 
+      ESP_LOGI(TAG, "Cold Boot: Applied Hardware Offset (Factory=%d, User=%d, Total=%d)", 
                factory_offset, offset_, total_offset);
     } else {
       // --- SOFT RESET DETECTED ---
-      // The ESP32 restarted, but the sensor remained powered. 
-      // Register 0x024 already contains the previously calculated total offset.
-      // We skip the addition to prevent register value drift/accumulation.
+      // The ESP32 restarted, but the sensor stayed powered. 
+      // Hardware already holds our previous total offset.
       
-      int8_t current_reg_val = (int8_t)hub_->sensor.readReg(0x024);
-      ESP_LOGI(TAG, "Soft Reset: Keeping existing Hardware Offset (%d)", current_reg_val);
+      int8_t current_hw_offset = (int8_t)hub_->sensor.readReg(0x024);
+      ESP_LOGI(TAG, "Soft Reset: Using existing Hardware Offset (%d)", current_hw_offset);
     }
   }
 }
@@ -100,7 +90,7 @@ void VL6180XDistanceSensor::update() {
     this->publish_state(NAN);
     return;
   }
-
+  
   uint8_t range = hub_->sensor.readRangeSingleMillimeters();
   
   // Status check: RESULT__RANGE_STATUS (Register 0x04D)
