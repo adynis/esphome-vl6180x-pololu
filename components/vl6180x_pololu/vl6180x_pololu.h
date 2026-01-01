@@ -39,6 +39,7 @@ class VL6180XDistanceSensor : public PollingComponent, public sensor::Sensor {
  public:
   VL6180XPololuHub *hub_;
   int offset_{0}; // Hardware offset to be written to register 0x024
+  int consecutive_errors_{0};
   
   void set_hub(VL6180XPololuHub *hub) { hub_ = hub; }
   void set_offset(int offset) { offset_ = offset; }
