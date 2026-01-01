@@ -52,9 +52,12 @@ sensor:
       # NOTE: Generic clones often require an offset (e.g., +50mm)
       offset: 0.0 # optional, defaults to 0
       filters:
-        # Median filter stabilizes readings by removing outliers
+        - filter_out: nan
         - median:
-            window_size: 5
+            window_size: 3 # MAI RAPID (de la 5 la 3)
+            send_every: 1
+        - exponential_moving_average:
+            alpha: 0.6 # MAI AGRESIV (de la 0.3 la 0.6)
             send_every: 1
             
     distance_error_code:
@@ -71,6 +74,7 @@ sensor:
       
     # ambient_light_error_code:
     #   name: "ALS Error Code"
+
 
 
 
