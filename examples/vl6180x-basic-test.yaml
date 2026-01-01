@@ -50,7 +50,7 @@ sensor:
       name: "Distance"
       update_interval: 500ms
       # NOTE: Generic clones often require an offset (e.g., +50mm)
-      offset: 50.0 # optional, defaults to 0
+      offset: 0.0 # optional, defaults to 0
       filters:
         # Median filter stabilizes readings by removing outliers
         - median:
@@ -71,6 +71,7 @@ sensor:
       
     # ambient_light_error_code:
     #   name: "ALS Error Code"
+
 
 
 
