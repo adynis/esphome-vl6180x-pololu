@@ -4,6 +4,8 @@
 esphome:
   name: vl6180x-basic-test
   friendly_name: VL6180X Basic Test
+  libraries:
+    - Wire
 
 # Link to your custom component on GitHub
 external_components:
@@ -74,6 +76,7 @@ sensor:
       
     # ambient_light_error_code:
     #   name: "ALS Error Code"
+
 
 
 
