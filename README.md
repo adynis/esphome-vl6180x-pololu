@@ -34,6 +34,11 @@ If you experience frequent "Unavailable" states or "Error 199" (Timeout) due to 
 
 Add this to your ESPHome YAML configuration:
 ```yaml
+    esphome:
+      ...
+      libraries:
+        - Wire
+
     external_components:
       - source: github://adynis/esphome-vl6180x-pololu@v1.1.0
         components: [ vl6180x_pololu ]
