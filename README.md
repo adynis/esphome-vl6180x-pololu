@@ -45,7 +45,7 @@ Add this to your ESPHome YAML configuration:
         - Wire
 
     external_components:
-      - source: github://adynis/esphome-vl6180x-pololu@v1.1.0
+      - source: github://adynis/esphome-vl6180x-pololu@v1.1.1
         components: [ vl6180x_pololu ]
 
     sensor:
