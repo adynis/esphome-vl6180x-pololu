@@ -4,6 +4,11 @@ This is a custom ESPHome component for the **VL6180X** Time-of-Flight (ToF) dist
 
 ## 📋 Version History
 
+### **v1.1.1**
+
+* **Dependency Resolution Fix: Switched Pololu VL6180X library source to direct Git tag reference (https://github.com/pololu/vl6180x-arduino.git#1.3.1).
+* **ESPHome 2026.9+ Compatibility: Resolves RuntimeError: No version of pololu/VL6180X satisfies all requirements caused by strict registry validation on upstream repos lacking formal GitHub releases.
+
 ### **v1.1.0**
 * **Dynamic I2C Timeouts:** Optimized ranging (50ms) and ALS (250ms) to prevent I2C hangs.
 * **Automatic Bus Recovery:** Integrated 9-pulse SCL recovery to clear stuck SDA lines.
