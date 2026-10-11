@@ -82,4 +82,6 @@ async def to_code(config):
         cg.add(var.set_hub(hub))
         cg.add(hub.set_als_gain(conf[CONF_GAIN]))
     
-    cg.add_library("pololu/VL6180X", "1.3.1")
+    # Upstream repository (pololu/vl6180x-arduino) does not publish formal GitHub Releases, only Git tags.
+    # This prevents PlatformIO Registry resolution in modern ESPHome versions, so we pull directly via git tag.
+    cg.add_library("https://github.com/pololu/vl6180x-arduino.git#1.3.1", None)
